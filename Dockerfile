@@ -17,8 +17,25 @@ RUN apk --update add \
     libressl-dev \
     libffi-dev
 
+RUN wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz \
+    && tar -xvzf libiconv-1.16.tar.gz \
+    && cd libiconv-1.16 \
+    && ./configure --prefix=/usr/local/lib \
+    && make \
+    && make install \
+    && cd /usr/local/lib \
+    && ln -s lib/libiconv.so libiconv.so \
+    && ln -s libpython3.8.so.1.0 libpython.so \
+    && ln -s lib/libiconv.so.2 libiconv.so.2
+
 # install dependencies
 RUN pip install --upgrade pip
+
+# install uwsgi now because it takes a little while
+RUN pip install uwsgi
+
+# setup uwsgi logging directory
+RUN mkdir -p /var/log/uwsgi
 
 RUN mkdir /app
 WORKDIR /app
@@ -31,6 +48,7 @@ COPY . /app/
 # start server
 EXPOSE 8000
 EXPOSE 5432
+EXPOSE 3031
 
 # run entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]

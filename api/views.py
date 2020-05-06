@@ -8,8 +8,8 @@ from rest_framework.response import Response
 
 
 # connect to our Redis instance
-redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
-                                   port=settings.REDIS_PORT, db=0)
+redis_instance = redis.StrictRedis(host=settings.WS4REDIS_CONNECTION['host'],
+                                   port=settings.WS4REDIS_CONNECTION['port'], db=0)
 
 
 @api_view(['GET', 'POST'])

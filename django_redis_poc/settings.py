@@ -15,18 +15,16 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'qy$&wv$_+a&!p27@%07-6ch(4w64u+!q(et2zm2&))4a6bt_@!'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 # Application definition
 
@@ -37,10 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    ## APP ##
     'rest_framework',
-
     'api',
+    'ws4redis',
 ]
 
 MIDDLEWARE = [
@@ -66,24 +64,29 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ws4redis.context_processors.default',
             ],
         },
     },
 ]
+WEBSOCKET_URL = '/ws/'
 
-WSGI_APPLICATION = 'django_redis_poc.wsgi.application'
+# WSGI_APPLICATION = 'django_redis_poc.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.environ.get("SQL_USER", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -103,7 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -117,11 +119,28 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/staticfiles/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-REDIS_HOST = 'redis-poc'
-REDIS_PORT = 6379
+### REDIS ###
+WS4REDIS_CONNECTION = {
+    'host': 'redis-poc',
+    # 'host': 'localhost',
+    'port': 6379,
+}
+
+# WS4REDIS_CONNECTION = {
+#     'unix_socket_path': '/tmp/redis.sock',
+#     'db': 5
+# }
+
+WS4REDIS_EXPIRE = 7200
+
+WS4REDIS_PREFIX = 'ws'
+
+# WS4REDIS_SUBSCRIBER = 'django_redis_poc.subscriber.RedisSubscriber'
+
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
