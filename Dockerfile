@@ -9,7 +9,6 @@ RUN apk update \
 
 # libssl-dev is a dependency for python cryptography package
 # libffi-dev is a dependency for cffi package (that in turn is a dependency of cryptography package)
-
 RUN apk --update add \
     build-base \
     jpeg-dev \
