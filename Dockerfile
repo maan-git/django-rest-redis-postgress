@@ -52,3 +52,4 @@ EXPOSE 3031
 
 # run entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["uwsgi", "--ini", "/app/uwsgi.ini"]

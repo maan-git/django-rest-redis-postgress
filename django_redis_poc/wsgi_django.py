@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
 """
 
 import os
+os.environ.update(DJANGO_SETTINGS_MODULE='django_redis_poc.settings')
 from django.core.wsgi import get_wsgi_application
 
-os.environ.update(DJANGO_SETTINGS_MODULE='django_redis_poc.settings')
 application = get_wsgi_application()

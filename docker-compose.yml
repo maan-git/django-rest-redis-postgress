@@ -5,7 +5,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     container_name: "web-redis-poc"
-    #command: gunicorn django_redis_poc.wsgi_django:application --bind 0.0.0.0:8000
+#    command: gunicorn django_redis_poc.wsgi_django:application --bind 0.0.0.0:8000
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./:/usr/src/app/
