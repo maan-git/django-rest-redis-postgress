@@ -8,3 +8,5 @@ https://www.eidel.io/2017/07/10/dockerizing-django-uwsgi-postgres/
 
 ##### Vue
 https://stackoverflow.com/questions/53345283/docker-container-set-up-for-django-vuejs
+
+https://django-websocket-redis.readthedocs.io/en/latest/running.html

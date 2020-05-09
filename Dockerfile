@@ -44,10 +44,7 @@ COPY requirements.txt /app/
 RUN pip install -r requirements.txt
 
 COPY . /app/
-# start server
-EXPOSE 8000
-EXPOSE 5432
-EXPOSE 3031
+RUN rm -Rf /app/front-redis-poc/* /app/nginx/* /app/Dockerfile-front
 
 # run entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
