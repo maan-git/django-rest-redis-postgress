@@ -5,8 +5,6 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
 
-
-
 # connect to our Redis instance
 redis_instance = redis.StrictRedis(host=settings.WS4REDIS_CONNECTION['host'],
                                    port=settings.WS4REDIS_CONNECTION['port'], db=0)

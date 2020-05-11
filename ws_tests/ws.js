@@ -1,4 +1,4 @@
-var ws = new WebSocket('ws://localhost:8000/ws/foobar?subscribe-broadcast&publish-broadcast&echo');
+var ws = new WebSocket('ws://localhost:1337/ws/foobar?subscribe-broadcast&publish-broadcast&echo');
 ws.onopen = function() {
     console.log("websocket connected");
 };

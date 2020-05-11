@@ -1,34 +1,40 @@
-version: "3.2"
+version: "3"
+
 services:
-  front-redis-poc:
+  front-poc:
     build:
       context: ./
       dockerfile: Dockerfile-front
-    container_name: front-redis-poc
+    container_name: "front-poc"
     volumes:
-      - ./:/usr/src/app/front-redis-poc
-      - ./:/usr/src/app/front-redis-poc/node_modules'
+      - ./:/usr/src/app/front-redis-poc/node_modules
     ports:
       - '8081:8080'
     depends_on:
-      - api-redis-poc
+      - api-poc
+    networks:
+      - nginx_network
 
-  api-redis-poc:
+  api-poc:
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: "api-redis-poc"
-#    command: gunicorn django_redis_poc.wsgi_django:application --bind 0.0.0.0:8000
-    command: python manage.py runserver 0.0.0.0:8000
+    container_name: "api-poc"
+    command: gunicorn django_redis_poc.wsgi_django:application --bind 0.0.0.0:8000
+#    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./:/usr/src/app/
-    ports:
-      - "8000:8000"
+#    ports:
+#      - "8000:8000"
+    expose:
+      - 8000
     env_file:
       - ./.env
     depends_on:
-      - db-redis-poc
+      - db-poc
       - redis-poc
+    networks:
+      - nginx_network
 
   redis-poc:
     container_name: "redis-poc"
@@ -41,18 +47,26 @@ services:
      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
      - REDIS_REPLICATION_MODE=master
+    networks:
+      - nginx_network
 
   nginx-poc:
+    container_name: "nginx-poc"
     build:
       context: ./nginx
       dockerfile: Dockerfile-nginx
     ports:
       - 1337:80
     depends_on:
-      - api-redis-poc
+      - front-poc
+      - api-poc
+      - db-poc
+      - redis-poc
+    networks:
+      - nginx_network
 
-  db-redis-poc:
-    container_name: "db-redis-poc"
+  db-poc:
+    container_name: "db-poc"
     image: postgres:12.0-alpine
     volumes:
       - postgres-data:/var/lib/postgresql/data/
@@ -60,8 +74,14 @@ services:
       - "5432:5432"
     env_file:
       - ./.env.db
+    networks:
+      - nginx_network
 
 
 volumes:
   postgres-data:
   redis-data:
+
+networks:  # <-- and here
+  nginx_network:
+    driver: bridge
